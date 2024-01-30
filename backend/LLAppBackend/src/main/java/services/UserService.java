@@ -13,15 +13,16 @@ public class UserService {
     @Autowired
     UserRepository userRepository;
 
-    public Optional<User> getUserById(Long id){
-        return userRepository.findById(id);
+    public User getUserById(Long id){
+        return userRepository.findById(id).get();
     }
 
     public User saveUser(String forename,String surname){
         User user = new User();
         user.setForename(forename);
         user.setSurname(surname);
-        return userRepository.save(user);
+        userRepository.save(user);
+        return user;
     }
 
     public void updateLevel(Long id){
