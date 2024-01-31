@@ -1,11 +1,14 @@
 package services;
 
 import models.Login;
+import models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import repositories.LoginRepository;
+import repositories.UserRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class LoginService {
@@ -13,10 +16,14 @@ public class LoginService {
     @Autowired
     LoginRepository loginRepository;
 
-    public void saveUserLogin(String email, String password){
+    @Autowired
+    UserRepository userRepository;
+
+    public void saveUserLogin(String email, String password, Long id){
         Login newUser = new Login();
         newUser.setEmail(email);
         newUser.setPassword(password);
+        newUser.setUser(userRepository.findById(id).get());
         loginRepository.save(newUser);
     }
 
@@ -73,5 +80,17 @@ public class LoginService {
             }
         }
         return true;
+    }
+
+
+//    check Login details
+    public Optional<User> checkLogin(String email, String password){
+        List<Login> currentUsersList = loginRepository.findAll();
+        for (Login userLogin : currentUsersList) {
+            if (email.equals(userLogin.getEmail()) && password.equals(userLogin.getPassword())) {
+                return Optional.of(userLogin.getUser());
+            }
+        }
+        return null;
     }
 }
